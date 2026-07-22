@@ -4,7 +4,7 @@
 
 - **同步频率**：GitHub Actions 每 3 天自动运行一次（也可手动触发）。
 - **版本对齐**：本仓库 Release 的 tag 与上游一致（形如 `YYYYMMDDHHmm`）；上游未更新时自动跳过，不产生重复 Release。
-- **稳定链接**：始终用 `releases/latest/download/<name>.mrs` 引用，会自动指向最新版本。
+- **稳定链接 / CDN**：通过 [jsDelivr](https://www.jsdelivr.com/) 分发，始终用 `cdn.jsdelivr.net/gh/yulinfeng000/clash-rules-mrs@release/<name>.mrs` 引用。
 
 ## 提供的规则（13 个 `.mrs`）
 
@@ -39,91 +39,91 @@ rule-providers:
     type: http
     behavior: domain
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/reject.mrs"
+    url: "https://cdn.jsdelivr.net/gh/yulinfeng000/clash-rules-mrs@release/reject.mrs"
     path: ./ruleset/reject.mrs
     interval: 86400
   icloud:
     type: http
     behavior: domain
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/icloud.mrs"
+    url: "https://cdn.jsdelivr.net/gh/yulinfeng000/clash-rules-mrs@release/icloud.mrs"
     path: ./ruleset/icloud.mrs
     interval: 86400
   apple:
     type: http
     behavior: domain
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/apple.mrs"
+    url: "https://cdn.jsdelivr.net/gh/yulinfeng000/clash-rules-mrs@release/apple.mrs"
     path: ./ruleset/apple.mrs
     interval: 86400
   google:
     type: http
     behavior: domain
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/google.mrs"
+    url: "https://cdn.jsdelivr.net/gh/yulinfeng000/clash-rules-mrs@release/google.mrs"
     path: ./ruleset/google.mrs
     interval: 86400
   proxy:
     type: http
     behavior: domain
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/proxy.mrs"
+    url: "https://cdn.jsdelivr.net/gh/yulinfeng000/clash-rules-mrs@release/proxy.mrs"
     path: ./ruleset/proxy.mrs
     interval: 86400
   direct:
     type: http
     behavior: domain
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/direct.mrs"
+    url: "https://cdn.jsdelivr.net/gh/yulinfeng000/clash-rules-mrs@release/direct.mrs"
     path: ./ruleset/direct.mrs
     interval: 86400
   private:
     type: http
     behavior: domain
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/private.mrs"
+    url: "https://cdn.jsdelivr.net/gh/yulinfeng000/clash-rules-mrs@release/private.mrs"
     path: ./ruleset/private.mrs
     interval: 86400
   gfw:
     type: http
     behavior: domain
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/gfw.mrs"
+    url: "https://cdn.jsdelivr.net/gh/yulinfeng000/clash-rules-mrs@release/gfw.mrs"
     path: ./ruleset/gfw.mrs
     interval: 86400
   greatfire:
     type: http
     behavior: domain
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/greatfire.mrs"
+    url: "https://cdn.jsdelivr.net/gh/yulinfeng000/clash-rules-mrs@release/greatfire.mrs"
     path: ./ruleset/greatfire.mrs
     interval: 86400
   tld-not-cn:
     type: http
     behavior: domain
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/tld-not-cn.mrs"
+    url: "https://cdn.jsdelivr.net/gh/yulinfeng000/clash-rules-mrs@release/tld-not-cn.mrs"
     path: ./ruleset/tld-not-cn.mrs
     interval: 86400
   telegramcidr:
     type: http
     behavior: ipcidr
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/telegramcidr.mrs"
+    url: "https://cdn.jsdelivr.net/gh/yulinfeng000/clash-rules-mrs@release/telegramcidr.mrs"
     path: ./ruleset/telegramcidr.mrs
     interval: 86400
   lancidr:
     type: http
     behavior: ipcidr
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/lancidr.mrs"
+    url: "https://cdn.jsdelivr.net/gh/yulinfeng000/clash-rules-mrs@release/lancidr.mrs"
     path: ./ruleset/lancidr.mrs
     interval: 86400
   cncidr:
     type: http
     behavior: ipcidr
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/cncidr.mrs"
+    url: "https://cdn.jsdelivr.net/gh/yulinfeng000/clash-rules-mrs@release/cncidr.mrs"
     path: ./ruleset/cncidr.mrs
     interval: 86400
 
@@ -155,6 +155,7 @@ rules:
 2. 下载 mihomo `compatible` 版二进制。
 3. 逐个下载上游 `.txt` 规则，用 `mihomo convert-ruleset <domain|ipcidr> yaml <in>.txt <out>.mrs` 转换。
 4. 用 [`softprops/action-gh-release`](https://github.com/softprops/action-gh-release) 以上游 tag 发布所有 `.mrs`。
+5. 将 `.mrs` 文件 force-push 到 `release` 分支，供 [jsDelivr CDN](https://www.jsdelivr.com/) 分发。
 
 ## 致谢
 

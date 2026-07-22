@@ -78,3 +78,20 @@ jobs:
           body: "由 Loyalsoldier/clash-rules release ${{ steps.up.outputs.tag }} 转换为 mihomo .mrs。"
           files: mrs/*.mrs
           make_latest: true
+
+      - name: Push .mrs 到 release 分支 (供 jsDelivr CDN)
+        if: steps.check.outputs.skip != 'true'
+        env:
+          TAG: ${{ steps.up.outputs.tag }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          DIST_DIR=$(mktemp -d)
+          cp mrs/*.mrs "$DIST_DIR/"
+          cd "$DIST_DIR"
+          git init
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add *.mrs
+          git commit -m "$TAG"
+          git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:release
