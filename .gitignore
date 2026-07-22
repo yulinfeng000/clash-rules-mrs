@@ -1,0 +1,7 @@
+# 本地测试产物（CI 在运行时生成，无需入库）
+/mihomo
+/mihomo.gz
+/rules/
+/mrs/
+*.mrs
+*.check.txt

@@ -1,0 +1,80 @@
+name: Sync clash-rules to MRS
+
+on:
+  schedule:
+    - cron: "22 21 */3 * *"   # 每 3 天一次(UTC 21:22,北京时间次日 05:22 左右)
+  workflow_dispatch:           # 支持手动触发
+
+permissions:
+  contents: write              # GITHUB_TOKEN 发布 Release 所需
+
+concurrency:
+  group: sync-mrs
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 解析上游最新 release tag
+        id: up
+        run: |
+          set -euo pipefail
+          TAG=$(curl -sSL --retry 3 --fail \
+            https://api.github.com/repos/Loyalsoldier/clash-rules/releases/latest \
+            | jq -r '.tag_name')
+          [ -n "$TAG" ] && [ "$TAG" != "null" ] || { echo "无法获取上游 tag"; exit 1; }
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "上游最新版本: $TAG"
+
+      - name: 变更检测(上游未更新则跳过)
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          MINE=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName -q '.tagName' 2>/dev/null || echo "")
+          if [ "$MINE" = "${{ steps.up.outputs.tag }}" ]; then
+            echo "已是最新($MINE),跳过。"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 安装 mihomo(compatible 版)
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          set -euo pipefail
+          VER=$(curl -sSL --retry 3 --fail \
+            https://api.github.com/repos/MetaCubeX/mihomo/releases/latest \
+            | jq -r '.tag_name')
+          [ -n "$VER" ] && [ "$VER" != "null" ] || VER="v1.19.24"   # 兜底版本
+          curl -sSL --retry 3 --fail -o mihomo.gz \
+            "https://github.com/MetaCubeX/mihomo/releases/download/${VER}/mihomo-linux-amd64-compatible-${VER}.gz"
+          gunzip mihomo.gz && chmod +x mihomo && sudo mv mihomo /usr/local/bin/mihomo
+          mihomo -v
+
+      - name: 下载上游规则并转换为 mrs
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p rules mrs
+          TAG="${{ steps.up.outputs.tag }}"
+          DOMAIN="apple direct gfw google greatfire icloud private proxy reject tld-not-cn"
+          IPCIDR="cncidr lancidr telegramcidr"
+          dl() { curl -sSL --retry 3 --fail -o "rules/$1.txt" \
+                 "https://github.com/Loyalsoldier/clash-rules/releases/download/${TAG}/$1.txt"; }
+          for n in $DOMAIN;  do dl "$n"; mihomo convert-ruleset domain yaml "rules/$n.txt" "mrs/$n.mrs"; done
+          for n in $IPCIDR;  do dl "$n"; mihomo convert-ruleset ipcidr yaml "rules/$n.txt" "mrs/$n.mrs"; done
+          # applications.txt 是 classical,mrs 不支持,按需求跳过
+          for f in mrs/*.mrs; do [ -s "$f" ] || { echo "空文件: $f"; exit 1; }; done   # 防 0 字节导致 release 上传失败
+          ls -l mrs
+
+      - name: 发布到 GitHub Release
+        if: steps.check.outputs.skip != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.up.outputs.tag }}
+          name: ${{ steps.up.outputs.tag }}
+          body: "由 Loyalsoldier/clash-rules release ${{ steps.up.outputs.tag }} 转换为 mihomo .mrs。"
+          files: mrs/*.mrs
+          make_latest: true
