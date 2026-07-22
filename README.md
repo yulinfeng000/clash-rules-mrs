@@ -42,12 +42,26 @@ rule-providers:
     url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/reject.mrs"
     path: ./ruleset/reject.mrs
     interval: 86400
-  direct:
+  icloud:
     type: http
     behavior: domain
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/direct.mrs"
-    path: ./ruleset/direct.mrs
+    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/icloud.mrs"
+    path: ./ruleset/icloud.mrs
+    interval: 86400
+  apple:
+    type: http
+    behavior: domain
+    format: mrs
+    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/apple.mrs"
+    path: ./ruleset/apple.mrs
+    interval: 86400
+  google:
+    type: http
+    behavior: domain
+    format: mrs
+    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/google.mrs"
+    path: ./ruleset/google.mrs
     interval: 86400
   proxy:
     type: http
@@ -56,6 +70,20 @@ rule-providers:
     url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/proxy.mrs"
     path: ./ruleset/proxy.mrs
     interval: 86400
+  direct:
+    type: http
+    behavior: domain
+    format: mrs
+    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/direct.mrs"
+    path: ./ruleset/direct.mrs
+    interval: 86400
+  private:
+    type: http
+    behavior: domain
+    format: mrs
+    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/private.mrs"
+    path: ./ruleset/private.mrs
+    interval: 86400
   gfw:
     type: http
     behavior: domain
@@ -63,12 +91,19 @@ rule-providers:
     url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/gfw.mrs"
     path: ./ruleset/gfw.mrs
     interval: 86400
-  cncidr:
+  greatfire:
     type: http
-    behavior: ipcidr
+    behavior: domain
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/cncidr.mrs"
-    path: ./ruleset/cncidr.mrs
+    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/greatfire.mrs"
+    path: ./ruleset/greatfire.mrs
+    interval: 86400
+  tld-not-cn:
+    type: http
+    behavior: domain
+    format: mrs
+    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/tld-not-cn.mrs"
+    path: ./ruleset/tld-not-cn.mrs
     interval: 86400
   telegramcidr:
     type: http
@@ -77,15 +112,36 @@ rule-providers:
     url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/telegramcidr.mrs"
     path: ./ruleset/telegramcidr.mrs
     interval: 86400
-  # 其余同理：apple / google / greatfire / icloud / private / tld-not-cn(domain）、lancidr(ipcidr)
+  lancidr:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/lancidr.mrs"
+    path: ./ruleset/lancidr.mrs
+    interval: 86400
+  cncidr:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/cncidr.mrs"
+    path: ./ruleset/cncidr.mrs
+    interval: 86400
 
+# 规则顺序参考 Loyalsoldier 官方推荐（先匹配者优先），google 默认走代理，可按需改为 DIRECT
 rules:
-  - RULE-SET,private,DIRECT
   - RULE-SET,reject,REJECT
-  - RULE-SET,cncidr,DIRECT
+  - RULE-SET,private,DIRECT
+  - RULE-SET,icloud,DIRECT
+  - RULE-SET,apple,DIRECT
+  - RULE-SET,google,PROXY
+  - RULE-SET,proxy,PROXY
   - RULE-SET,direct,DIRECT
   - RULE-SET,gfw,PROXY
-  - RULE-SET,proxy,PROXY
+  - RULE-SET,greatfire,PROXY
+  - RULE-SET,tld-not-cn,PROXY
+  - RULE-SET,telegramcidr,PROXY
+  - RULE-SET,lancidr,DIRECT
+  - RULE-SET,cncidr,DIRECT
   - MATCH,PROXY
 ```
 
