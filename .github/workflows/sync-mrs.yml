@@ -34,8 +34,13 @@ jobs:
         run: |
           MINE=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName -q '.tagName' 2>/dev/null || echo "")
           if [ "$MINE" = "${{ steps.up.outputs.tag }}" ]; then
-            echo "已是最新($MINE),跳过。"
-            echo "skip=true" >> "$GITHUB_OUTPUT"
+            if git ls-remote --exit-code --heads origin release >/dev/null 2>&1; then
+              echo "已是最新($MINE),跳过。"
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "已是最新($MINE),但 release 分支不存在,继续构建以初始化。"
+              echo "skip=false" >> "$GITHUB_OUTPUT"
+            fi
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
