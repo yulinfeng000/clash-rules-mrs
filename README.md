@@ -26,6 +26,9 @@
 
 > **注意**：上游的 `applications.txt` 属于 `classical` 类型，而 mrs 格式**只支持 `domain` / `ipcidr`**，无法转换，故本仓库不提供 `applications.mrs`。如需该规则，请直接使用上游文本文件：`https://github.com/Loyalsoldier/clash-rules/releases/latest/download/applications.txt`（`behavior: classical`）。
 
+<!-- 消费链接指向本仓库 yulinfeng000/clash-rules-mrs -->
+
+
 ## 使用方法
 
 在 mihomo / Clash.Meta 配置中引用（按需增减）：
@@ -36,42 +39,42 @@ rule-providers:
     type: http
     behavior: domain
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules/releases/latest/download/reject.mrs"
+    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/reject.mrs"
     path: ./ruleset/reject.mrs
     interval: 86400
   direct:
     type: http
     behavior: domain
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules/releases/latest/download/direct.mrs"
+    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/direct.mrs"
     path: ./ruleset/direct.mrs
     interval: 86400
   proxy:
     type: http
     behavior: domain
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules/releases/latest/download/proxy.mrs"
+    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/proxy.mrs"
     path: ./ruleset/proxy.mrs
     interval: 86400
   gfw:
     type: http
     behavior: domain
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules/releases/latest/download/gfw.mrs"
+    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/gfw.mrs"
     path: ./ruleset/gfw.mrs
     interval: 86400
   cncidr:
     type: http
     behavior: ipcidr
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules/releases/latest/download/cncidr.mrs"
+    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/cncidr.mrs"
     path: ./ruleset/cncidr.mrs
     interval: 86400
   telegramcidr:
     type: http
     behavior: ipcidr
     format: mrs
-    url: "https://github.com/yulinfeng000/clash-rules/releases/latest/download/telegramcidr.mrs"
+    url: "https://github.com/yulinfeng000/clash-rules-mrs/releases/latest/download/telegramcidr.mrs"
     path: ./ruleset/telegramcidr.mrs
     interval: 86400
   # 其余同理：apple / google / greatfire / icloud / private / tld-not-cn(domain）、lancidr(ipcidr)
